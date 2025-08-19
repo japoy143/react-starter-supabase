@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "title": "Breakthrough in Heart Disease Treatment",
+    "description": "Scientists have developed a new gene therapy that can repair damaged heart tissue, offering hope for millions of patients worldwide.",
+    "date": "August 12, 2025"
+  },
+  {
+    "id": "2",
+    "title": "AI Revolutionizes Cancer Detection",
+    "description": "A newly approved AI system can detect early-stage cancer from medical scans with higher accuracy than traditional methods.",
+    "date": "July 28, 2025"
+  },
+  {
+    "id": "3",
+    "title": "Global Efforts to Eradicate Polio",
+    "description": "The WHO reports that polio cases have dropped to historic lows, raising hopes for complete eradication within the next decade.",
+    "date": "June 20, 2025"
+  },
+  {
+    "id": "4",
+    "title": "Advances in Mental Health Care",
+    "description": "Researchers highlight the effectiveness of digital therapies and mobile apps in improving access to mental health support.",
+    "date": "May 8, 2025"
+  }
+]

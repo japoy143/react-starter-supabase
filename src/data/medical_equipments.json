@@ -1,0 +1,17 @@
+[
+  {
+    "id": "1",
+    "equipment_name": "Operating Microscope",
+    "description": "Magnified high resolution eye visualization."
+  },
+  {
+    "id": "2",
+    "equipment_name": "Phacoemulsification Machine",
+    "description": "Breaks up and removes cataracts."
+  },
+  {
+    "id": "3",
+    "equipment_name": "Speculum",
+    "description": "Holds eyelids open during surgery."
+  }
+]

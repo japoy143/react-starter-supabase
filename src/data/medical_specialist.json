@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1",
+    "specialization": "Cardiologist"
+  },
+
+  {
+    "id": "2",
+    "specialization": "Eye Surgeon"
+  },
+
+  {
+    "id": "3",
+    "specialization": "Ob-gyn"
+  }
+]
