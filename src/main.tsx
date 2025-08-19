@@ -10,6 +10,7 @@ import About from "./pages/About";
 import Layout from "./components/Layout";
 import Notfound from "./components/Notfound";
 import Article from "./pages/Homepage/Article";
+import Todo from "./pages/Todo";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
         element: <Article />,
       },
     ],
+  },
+  {
+    path: "/todo",
+    element: <Todo />,
   },
 ]);
 
