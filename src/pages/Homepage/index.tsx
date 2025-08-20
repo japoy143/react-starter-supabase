@@ -11,6 +11,7 @@ import Articles from "./Articles";
 import MedicalEquipments from "./MedicalEquipments";
 import MedicalSpecialist from "./MedicalSpecialist";
 import Spacer from "../../components/Spacer";
+import News from "./News";
 
 export default function Homepage() {
   const images = [image1, image2, image3];
@@ -48,14 +49,7 @@ export default function Homepage() {
       {/* latest news */}
       <Spacer />
 
-      <div className=" grid grid-cols-2 gap-6 ">
-        {news_data.map((data) => (
-          <div key={data.id} className=" border-b  space-y-1 py-2">
-            <h2>{data.news_title}</h2>
-            <p className=" font-light text-sm">{data.news_date}</p>
-          </div>
-        ))}
-      </div>
+      <News />
 
       <Spacer />
       <div className=" flex  justify-center">
