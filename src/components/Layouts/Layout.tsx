@@ -1,8 +1,8 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Nav from "./Nav";
-import Contact from "./Contact";
-import Spacer from "./Spacer";
+import Nav from "../Nav";
+import Contact from "../Contact";
+import Spacer from "../Spacer";
 
 export default function Layout() {
   return (

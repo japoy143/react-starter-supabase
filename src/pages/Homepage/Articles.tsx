@@ -4,6 +4,7 @@ import supabase from "../../supabase-client";
 //image
 import image1 from "../../assets/imgs/img1.jpg";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 type ArticleType = {
   id: string;
@@ -13,22 +14,60 @@ type ArticleType = {
   created_at: string;
 };
 export default function Articles() {
-  const [articles, setArticles] = useState<ArticleType[]>([]);
-
-  useEffect(() => {
-    fetchArticles();
-  }, []);
-
   const fetchArticles = async () => {
     const { data, error } = await supabase.from("Articles").select("*");
 
     if (error) {
       console.log("error fetching articles: ", error);
     } else {
-      setArticles(data as ArticleType[]);
       console.log("successfully fetch articles");
+      return data as ArticleType[];
     }
   };
+
+  const {
+    data: articles = [],
+    error,
+    isPending,
+  } = useQuery({
+    queryKey: ["articles"],
+    queryFn: fetchArticles,
+  });
+
+  if (isPending) {
+    return (
+      <div className=" grid grid-cols-2 gap-6">
+        {Array.from({ length: 4 }).map((__, index) => (
+          <div key={index} className=" w-full animate-pulse">
+            <div className=" h-[240px] w-full  bg-gray-200"></div>
+
+            <div className=" p-2">
+              <h2 className=" text-xl ">
+                <span className="bg-gray-200 text-transparent">
+                  Lorem, ipsum dolor sit amet consectetur
+                </span>
+              </h2>
+              <h4 className=" font-light">
+                <span className="bg-gray-200 text-transparent">
+                  Lorem, ipsum dolor
+                </span>
+              </h4>
+              <p className="  text-justify font-light text-gray-600">
+                <span className="bg-gray-200 text-transparent">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Nostrum voluptatum nesciunt exercitationem vero nisi.
+                </span>
+              </p>
+            </div>
+
+            <div className=" flex justify-end">
+              <span className="bg-gray-200 text-transparent">read more</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className=" grid grid-cols-2 gap-6">

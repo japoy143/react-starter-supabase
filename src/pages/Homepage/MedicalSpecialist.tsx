@@ -5,18 +5,13 @@ import supabase from "../../supabase-client";
 import specialist1 from "../../assets/imgs/specialist1.webp";
 import specialist2 from "../../assets/imgs/specialist2.jpeg";
 import specialist3 from "../../assets/imgs/specialist3.webp";
+import { useQuery } from "@tanstack/react-query";
 
 type SpecialistType = {
   id: number;
   specialization: string;
 };
 export default function MedicalSpecialist() {
-  useEffect(() => {
-    fetchSpecialization();
-  }, []);
-
-  const [specialists, setSpcialist] = useState<SpecialistType[]>([]);
-
   const fetchSpecialization = async () => {
     const { data, error } = await supabase
       .from("Medical Specialization")
@@ -26,15 +21,42 @@ export default function MedicalSpecialist() {
       console.log("error fetching specialization: ", error);
     } else {
       console.log("successfully fetch specialization");
-      setSpcialist(data as SpecialistType[]);
+      return data as SpecialistType[];
     }
   };
 
   const specialist_images = [specialist1, specialist2, specialist3];
 
+  const {
+    data: specialization = [],
+    error,
+    isPending,
+  } = useQuery({
+    queryKey: ["specialist"],
+    queryFn: fetchSpecialization,
+  });
+
+  if (isPending) {
+    return (
+      <div className=" grid grid-cols-3 gap-4 animate-pulse">
+        {Array.from({ length: 3 }).map((__, index) => (
+          <div className="w-full " key={index}>
+            <div className="h-[200px] w-full  bg-gray-200"></div>
+
+            <h2>
+              <span className=" bg-gray-200 text-transparent">
+                Lorem ipsum dolor sit, amet
+              </span>
+            </h2>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className=" grid grid-cols-3 gap-4">
-      {specialists.map((data, index) => (
+      {specialization.map((data, index) => (
         <div className="w-full " key={data.id}>
           <img
             src={specialist_images[index]}
