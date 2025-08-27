@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
 import supabase from "../../supabase-client";
 
-//images
-import specialist1 from "../../assets/imgs/specialist1.webp";
-import specialist2 from "../../assets/imgs/specialist2.jpeg";
-import specialist3 from "../../assets/imgs/specialist3.webp";
 import { useQuery } from "@tanstack/react-query";
 
 type SpecialistType = {
   id: number;
   specialization: string;
+  image_url: string;
 };
 export default function MedicalSpecialist() {
   const fetchSpecialization = async () => {
     const { data, error } = await supabase
       .from("Medical Specialization")
-      .select("*");
+      .select("*")
+      .order("created_at", { ascending: true })
+      .limit(3);
 
     if (error) {
       console.log("error fetching specialization: ", error);
@@ -24,8 +23,6 @@ export default function MedicalSpecialist() {
       return data as SpecialistType[];
     }
   };
-
-  const specialist_images = [specialist1, specialist2, specialist3];
 
   const {
     data: specialization = [],
@@ -59,7 +56,7 @@ export default function MedicalSpecialist() {
       {specialization.map((data, index) => (
         <div className="w-full " key={data.id}>
           <img
-            src={specialist_images[index]}
+            src={data.image_url}
             alt="medical equipment"
             className=" h-[200px] w-full bg-cover"
           />

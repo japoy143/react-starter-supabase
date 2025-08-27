@@ -9,8 +9,13 @@ type NewsType = {
 };
 
 export default function News() {
+  
   const fetchNews = async () => {
-    const { data, error } = await supabase.from("News").select();
+    const { data, error } = await supabase
+      .from("News")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(4);
 
     if (error) {
       console.log("error fetching news: ", error);

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import supabase from "../../supabase-client";
 
-//image
-import image1 from "../../assets/imgs/img1.jpg";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
@@ -12,10 +10,15 @@ type ArticleType = {
   description: string;
   date: string;
   created_at: string;
+  image_url: string;
 };
 export default function Articles() {
   const fetchArticles = async () => {
-    const { data, error } = await supabase.from("Articles").select("*");
+    const { data, error } = await supabase
+      .from("Articles")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(4);
 
     if (error) {
       console.log("error fetching articles: ", error);
@@ -74,7 +77,7 @@ export default function Articles() {
       {articles.map((data) => (
         <div key={data.id} className=" w-full">
           <img
-            src={image1}
+            src={data.image_url}
             alt="image"
             className=" h-[240px] w-full object-cover"
           />

@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from "react";
 import supabase from "../../supabase-client";
 
-//images
-import equipment1 from "../../assets/imgs/equipment1.jpeg";
-import equipment2 from "../../assets/imgs/equipment2.jpeg";
-import equipment3 from "../../assets/imgs/equipment3.jpg";
 import { useQuery } from "@tanstack/react-query";
 
 type MedicalEquipmentType = {
   id: number;
   name: string;
   description: string;
+  image_url: string;
 };
 
 export default function MedicalEquipments() {
   const fetchMedicalEquipments = async () => {
     const { data, error } = await supabase
       .from("Medical Equipment")
-      .select("*");
+      .select("*")
+      .order("created_at", { ascending: true })
+      .limit(3);
 
     if (error) {
       console.log("error fetching medical equipments: ", error);
@@ -26,8 +25,6 @@ export default function MedicalEquipments() {
       return data as MedicalEquipmentType[];
     }
   };
-
-  const equipments_images = [equipment1, equipment2, equipment3];
 
   const {
     data: equipments = [],
@@ -66,7 +63,7 @@ export default function MedicalEquipments() {
       {equipments.map((data, index) => (
         <div className="w-full " key={data.id}>
           <img
-            src={equipments_images[index]}
+            src={data.image_url}
             alt="medical equipment"
             className=" h-[200px] w-full bg-cover"
           />
