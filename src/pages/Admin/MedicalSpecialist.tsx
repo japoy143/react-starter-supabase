@@ -1,68 +1,38 @@
-import React, { useState, type ChangeEvent, type FormEvent } from "react";
+import React, { useRef, useState } from "react";
 import FormButton from "../../components/FormButton";
 import FormError from "../../components/FormError";
-import supabase from "../../supabase-client";
+
+import ImagePreview from "../../components/Admin/ImagePreview";
+import {
+  handleDragOver,
+  handleDropOver,
+  removeImagePreview,
+} from "../../utils/DragAndDrop";
+import {
+  handleFileOnchange,
+  handleImageUpload,
+} from "../../utils/Admin/UploadFileImage";
 
 export default function AdminMedicalSpecialist() {
   const [specialization, setSpecialization] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [articleImage, setArticleImage] = useState<File | null>(null);
+  const [specialistImage, setSpecialistImage] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<any>();
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  const ImagePath = "specialization";
+  const DataPath = "Medical Specialization";
 
-  const handleFileOnchange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files?.length > 0) {
-      setArticleImage(e.target.files[0]);
+  const resetForm = () => {
+    if (fileRef.current) {
+      fileRef.current.value = "";
     }
+    setSpecialization("");
+    setPreviewImage("");
   };
 
-  const uploadImage = async (file: File): Promise<string | null> => {
-    //unique naming
-    const filePath = `${file.name}-${Date.now()}`;
-
-    const { error } = await supabase.storage
-      .from("specialization")
-      .upload(filePath, file);
-
-    if (error) {
-      console.error("Error uploading image: ", error.message);
-      return null;
-    }
-
-    const { data } = await supabase.storage
-      .from("specialization")
-      .getPublicUrl(filePath);
-
-    return data.publicUrl;
-  };
-
-  const handleAddSpecialization = async (e: FormEvent<HTMLElement>) => {
-    e.preventDefault();
-
-    setLoading(true);
-    try {
-      let imageUrl: string | null = null;
-
-      if (articleImage) {
-        imageUrl = await uploadImage(articleImage);
-      }
-
-      const { data, error } = await supabase
-        .from("Medical Specialization")
-        .insert({
-          specialization: specialization,
-          image_url: imageUrl,
-        });
-
-      if (error) {
-        console.error("error adding specialization: ", error);
-        setError(error.message);
-      }
-    } catch (error) {
-      console.error("error adding specialization: ", error);
-    } finally {
-      setSpecialization("");
-      setLoading(false);
-    }
+  const formData = {
+    specialization: specialization,
   };
 
   return (
@@ -70,11 +40,44 @@ export default function AdminMedicalSpecialist() {
       <h1>Medical Specialist</h1>
 
       <form
-        className="p-4 space-y-2 w-full md:w-1/2 lg:w-1/4"
-        onSubmit={handleAddSpecialization}
+        className="p-4 space-y-2 w-full md:w-1/2 lg:w-1/3"
+        onSubmit={(e) =>
+          handleImageUpload(
+            e,
+            setLoading,
+            specialistImage,
+            ImagePath,
+            DataPath,
+            resetForm,
+            setError,
+            formData
+          )
+        }
       >
         {/* TODO: must have a image drag and drop input */}
-        <input type="file" accept="image/*" onChange={handleFileOnchange} />
+        <ImagePreview
+          handleDragOver={handleDragOver}
+          setImage={setSpecialistImage}
+          setPreviewImage={setPreviewImage}
+          previewImage={previewImage}
+          fileRef={fileRef}
+          handleDropOver={(e) =>
+            handleDropOver(e, setSpecialistImage, setPreviewImage)
+          }
+          removeImagePreview={() =>
+            removeImagePreview(setSpecialistImage, setPreviewImage, fileRef)
+          }
+        />
+        <input
+          hidden
+          id="fileInput"
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          onChange={(e) =>
+            handleFileOnchange(e, setSpecialistImage, setPreviewImage)
+          }
+        />
         <div className=" flex flex-col space-y-2">
           <label>Name</label>
           <input

@@ -18,6 +18,7 @@ import SignUp from "../pages/Admin/Auth/SignUp";
 import SignIn from "../pages/Admin/Auth/SignIn";
 import AuthLayout from "../components/Layouts/AuthLayout";
 import PrivateRoute from "./PrivateRoute";
+import { AuthContextProvider } from "../context/AuthContext";
 
 export const router = createBrowserRouter([
   {
@@ -46,7 +47,11 @@ export const router = createBrowserRouter([
   },
   {
     path: "/admin/dashboard",
-    element: <DashboardLayout />,
+    element: (
+      <AuthContextProvider>
+        <DashboardLayout />
+      </AuthContextProvider>
+    ),
     errorElement: <Notfound />,
     children: [
       {
@@ -69,7 +74,6 @@ export const router = createBrowserRouter([
         path: "news",
         element: <AdminNews />,
       },
-      
     ],
   },
   {

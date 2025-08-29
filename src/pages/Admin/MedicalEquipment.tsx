@@ -1,14 +1,17 @@
-import React, {
-  useRef,
-  useState,
-  type ChangeEvent,
-  type FormEvent,
-} from "react";
+import React, { useRef, useState } from "react";
 import FormButton from "../../components/FormButton";
 import FormError from "../../components/FormError";
-import supabase from "../../supabase-client";
-import UploadIcon from "../../assets/icons/UploadIcon";
-import CloseIcon from "../../assets/icons/CloseIcon";
+
+import {
+  handleDragOver,
+  handleDropOver,
+  removeImagePreview,
+} from "../../utils/DragAndDrop";
+import ImagePreview from "../../components/Admin/ImagePreview";
+import {
+  handleFileOnchange,
+  handleImageUpload,
+} from "../../utils/Admin/UploadFileImage";
 
 export default function AdminMedicalEquipments() {
   const [equipment, setEquipment] = useState<string>("");
@@ -18,111 +21,21 @@ export default function AdminMedicalEquipments() {
   const [equipmentImage, setEquipmentImage] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [previewImage, setPreviewImage] = useState<any>();
+  const ImagePath = "equipment";
+  const DataPath = "Medical Equipment";
 
-  //file on change
-  const handleFileOnchange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      if (file.size > 0) {
-        setEquipmentImage(file);
-
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-          setPreviewImage(reader.result);
-        };
-      } else {
-        setEquipmentImage(null);
-      }
-    }
-  };
-
-  //upload image to supabase
-  const uploadImage = async (file: File): Promise<string | null> => {
-    if (!file || file.size === 0) return null;
-    const filePath = `${file.name}-${Date.now()}`;
-
-    const { error } = await supabase.storage
-      .from("equipment")
-      .upload(filePath, file);
-
-    if (error) {
-      console.error("Error occurred uploading equipment: ", error);
-      return null;
-    }
-
-    const { data } = await supabase.storage
-      .from("equipment")
-      .getPublicUrl(filePath);
-
-    return data.publicUrl;
-  };
-
-  const handleAddEquipment = async (e: FormEvent<HTMLElement>) => {
-    e.preventDefault();
-
-    setLoading(true);
-    try {
-      let imageUrl: string | null = null;
-
-      if (equipmentImage) {
-        imageUrl = await uploadImage(equipmentImage);
-      }
-
-      const { data, error } = await supabase.from("Medical Equipment").insert({
-        name: equipment,
-        description: description,
-        image_url: imageUrl,
-      });
-
-      if (error) {
-        console.error("error saving equipment: ", error);
-        setError(error.message);
-      }
-    } catch (error) {
-      console.error("error saving equipment: ", error);
-    } finally {
-      if (fileRef.current) {
-        fileRef.current.value = "";
-      }
-      setEquipmentImage(null);
-      setEquipment("");
-      setDescription("");
-      setLoading(false);
-    }
-  };
-
-  //handle drag and drop
-  const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    console.log("drag event");
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
-    e.preventDefault();
-    handleImage(e.dataTransfer.files);
-  };
-
-  const handleImage = (files: FileList) => {
-    if (!files) return;
-    const file = files[0];
-    setEquipmentImage(file);
-    const reader = new FileReader();
-
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      setPreviewImage(reader.result);
-    };
-  };
-
-  const removeImagePreview = () => {
+  const resetForm = () => {
     if (fileRef.current) {
       fileRef.current.value = "";
     }
-    setEquipmentImage(null);
+    setEquipment("");
+    setDescription("");
     setPreviewImage("");
+  };
+
+  const formData = {
+    equipment: equipment,
+    description: description,
   };
 
   return (
@@ -130,43 +43,34 @@ export default function AdminMedicalEquipments() {
       <h1>Medical Equipment</h1>
 
       <form
-        className="p-4 space-y-2 w-full md:w-1/2 lg:w-1/4"
-        onSubmit={handleAddEquipment}
+        className="p-4 space-y-2 w-full md:w-1/2 lg:w-1/3"
+        onSubmit={(e) =>
+          handleImageUpload(
+            e,
+            setLoading,
+            equipmentImage,
+            ImagePath,
+            DataPath,
+            resetForm,
+            setError,
+            formData
+          )
+        }
       >
         {/* TODO: must have a image drag and drop input */}
-        <div className=" relative w-full h-[200px]">
-          <label
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-            htmlFor="fileInput"
-            className="group p-1 w-full h-full  flex flex-col items-center justify-center rounded border border-gray-400 hover:border-blue-400 border-dashed cursor-pointer"
-          >
-            {previewImage ? (
-              <div className="w-full h-full">
-                <img
-                  src={previewImage}
-                  alt="previewImage"
-                  className=" w-full h-full object-cover"
-                />
-              </div>
-            ) : (
-              <>
-                <p className=" group-hover:text-blue-400">Upload Image</p>
-                <UploadIcon classname=" group-hover:text-blue-400 size-6" />
-              </>
-            )}
-          </label>
-
-          {previewImage && (
-            <div
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={removeImagePreview}
-              className=" p-1  absolute top-2 right-2 shadow-2xl cursor-pointer"
-            >
-              <CloseIcon className=" size-4" />
-            </div>
-          )}
-        </div>
+        <ImagePreview
+          handleDragOver={handleDragOver}
+          setImage={setEquipmentImage}
+          setPreviewImage={setPreviewImage}
+          previewImage={previewImage}
+          fileRef={fileRef}
+          handleDropOver={(e) =>
+            handleDropOver(e, setEquipmentImage, setPreviewImage)
+          }
+          removeImagePreview={() =>
+            removeImagePreview(setEquipmentImage, setPreviewImage, fileRef)
+          }
+        />
 
         <input
           hidden
@@ -174,7 +78,9 @@ export default function AdminMedicalEquipments() {
           ref={fileRef}
           type="file"
           accept="image/*"
-          onChange={handleFileOnchange}
+          onChange={(e) =>
+            handleFileOnchange(e, setEquipmentImage, setPreviewImage)
+          }
         />
         <div className=" flex flex-col space-y-2">
           <label>Name</label>
