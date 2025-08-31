@@ -1,15 +1,9 @@
 import React, { useEffect, useState } from "react";
 import supabase from "../../supabase-client";
 import { useQuery } from "@tanstack/react-query";
-
-type NewsType = {
-  id: string;
-  news_title: string;
-  news_date: string;
-};
+import type { NewsType } from "../../utils/types";
 
 export default function News() {
-  
   const fetchNews = async () => {
     const { data, error } = await supabase
       .from("News")

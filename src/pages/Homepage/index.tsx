@@ -5,7 +5,7 @@ import image3 from "../../assets/imgs/img3.jpg";
 import SectionTitle from "../../components/SectionTitle";
 
 //news collection in json
-import news_data from "../../data/news.json";
+
 import SectionButton from "../../components/SectionButton";
 import Articles from "./Articles";
 import MedicalEquipments from "./MedicalEquipments";

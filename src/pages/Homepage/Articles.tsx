@@ -1,17 +1,9 @@
-import React, { useEffect, useState } from "react";
 import supabase from "../../supabase-client";
 
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import type { ArticleType } from "../../utils/types";
 
-type ArticleType = {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  created_at: string;
-  image_url: string;
-};
 export default function Articles() {
   const fetchArticles = async () => {
     const { data, error } = await supabase

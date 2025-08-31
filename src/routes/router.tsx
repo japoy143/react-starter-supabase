@@ -17,8 +17,9 @@ import AdminArticles from "../pages/Admin/Articles";
 import SignUp from "../pages/Admin/Auth/SignUp";
 import SignIn from "../pages/Admin/Auth/SignIn";
 import AuthLayout from "../components/Layouts/AuthLayout";
-import PrivateRoute from "./PrivateRoute";
 import { AuthContextProvider } from "../context/AuthContext";
+import Appointments from "../pages/Appointments";
+import AdminAppointments from "../pages/Admin/Appointment";
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
         element: <Article />,
       },
     ],
+  },
+  {
+    path: "/appointments",
+    element: <Appointments />,
   },
   {
     path: "/admin/dashboard",
@@ -73,6 +78,10 @@ export const router = createBrowserRouter([
       {
         path: "news",
         element: <AdminNews />,
+      },
+      {
+        path: "appointment",
+        element: <AdminAppointments />,
       },
     ],
   },

@@ -2,12 +2,8 @@ import React, { useEffect, useState } from "react";
 import supabase from "../../supabase-client";
 
 import { useQuery } from "@tanstack/react-query";
+import type { SpecialistType } from "../../utils/types";
 
-type SpecialistType = {
-  id: number;
-  specialization: string;
-  image_url: string;
-};
 export default function MedicalSpecialist() {
   const fetchSpecialization = async () => {
     const { data, error } = await supabase

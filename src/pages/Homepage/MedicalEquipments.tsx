@@ -2,13 +2,7 @@ import React, { useEffect, useState } from "react";
 import supabase from "../../supabase-client";
 
 import { useQuery } from "@tanstack/react-query";
-
-type MedicalEquipmentType = {
-  id: number;
-  name: string;
-  description: string;
-  image_url: string;
-};
+import type { MedicalEquipmentType } from "../../utils/types";
 
 export default function MedicalEquipments() {
   const fetchMedicalEquipments = async () => {
